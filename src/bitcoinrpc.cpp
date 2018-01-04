@@ -189,19 +189,16 @@ string CRPCTable::help(string strCommand) const
 
 Value help(const Array& params, bool fHelp)
 {
-    if (params.size() > 1)
+    if (fHelp || params.size() > 1)
         throw runtime_error(
             "help [command]\n"
             "List commands, or get help for a command.");
 
-    if(params.size() == 1)
-    {
-      string strCommand = params[0].get_str();
+    string strCommand;
+    if (params.size() > 0)
+        strCommand = params[0].get_str();
 
-      return tableRPC.help(strCommand);
-    }
-
-    return tableRPC();
+    return tableRPC.help(strCommand);
 }
 
 
@@ -238,7 +235,6 @@ static const CRPCCommand vRPCCommands[] =
     { "getnumblocksofpeers",    &getnumblocksofpeers,    true,   false },
     { "getpeerinfo",            &getpeerinfo,            true,   false },
     { "getdifficulty",          &getdifficulty,          true,   false },
-    { "gw1",          &gw1,          true,   false },
     { "getnetworkmhashps",      &getnetworkmhashps,      true,   false },
     { "getinfo",                &getinfo,                true,   false },
     { "getsubsidy",             &getsubsidy,             true,   false },
@@ -255,7 +251,6 @@ static const CRPCCommand vRPCCommands[] =
     { "sendtodion",             &sendtodion,          false,  false },
     { "addresstodion",             &addresstodion,    false,  false },
     { "getreceivedbyaddress",   &getreceivedbyaddress,   false,  false },
-    { "gra",   &gra,   false,  false },
     { "getreceivedbyaccount",   &getreceivedbyaccount,   false,  false },
     { "listreceivedbyaddress",  &listreceivedbyaddress,  false,  false },
     { "listreceivedbyaccount",  &listreceivedbyaccount,  false,  false },
@@ -300,9 +295,8 @@ static const CRPCCommand vRPCCommands[] =
     { "dumpprivkey",            &dumpprivkey,            false,  false },
     { "dumpwallet",             &dumpwallet,             true,   false },
     { "importwallet",           &importwallet,           false,  false },
-    { "crawgen",                &crawgen,   false,  false },
-    { "rmtx",                   &rmtx,   false,  false },
     { "importprivkey",          &importprivkey,          false,  false },
+	{ "importaddress",          &importaddress,          false,  false },
     { "listunspent",            &listunspent,            false,  false },
     { "getrawtransaction",      &getrawtransaction,      false,  false },
     { "createrawtransaction",   &createrawtransaction,   false,  false },
@@ -367,27 +361,12 @@ CRPCTable::CRPCTable()
     }
 }
 
-const CRPCCommand* CRPCTable::operator[](string name) const
+const CRPCCommand *CRPCTable::operator[](string name) const
 {
     map<string, const CRPCCommand*>::const_iterator it = mapCommands.find(name);
     if (it == mapCommands.end())
         return NULL;
     return (*it).second;
-}
-
-const json_spirit::Value CRPCTable::operator()() const
-{
-    Array v;
-    map<string, const CRPCCommand*>::const_iterator it = mapCommands.begin();
-    while(it != mapCommands.end())
-    {
-      Value o;
-      o = (*it).first;
-      v.push_back(o);
-      it++;
-    }
-
-    return v;
 }
 
 //
@@ -1293,13 +1272,12 @@ Array RPCConvertValues(const std::string &strMethod, const std::vector<std::stri
     if (strMethod == "listunspent"            && n > 0) ConvertTo<int64_t>(params[0]);
     if (strMethod == "listunspent"            && n > 1) ConvertTo<int64_t>(params[1]);
     if (strMethod == "listunspent"            && n > 2) ConvertTo<Array>(params[2]);
-    if (strMethod == "crawgen") { ConvertTo<double>(params[0]); ConvertTo<Object>(params[1]); }
     if (strMethod == "getrawtransaction"      && n > 1) ConvertTo<int64_t>(params[1]);
     if (strMethod == "createrawtransaction"   && n > 0) ConvertTo<Array>(params[0]);
     if (strMethod == "createrawtransaction"   && n > 1) ConvertTo<Object>(params[1]);
     if (strMethod == "signrawtransaction"     && n > 1) ConvertTo<Array>(params[1], true);
     if (strMethod == "signrawtransaction"     && n > 2) ConvertTo<Array>(params[2], true);
-
+    if (strMethod == "importaddress" 		  && n > 2) ConvertTo<bool>(params[2]);
     if (strMethod == "keypoolrefill"          && n > 0) ConvertTo<int64_t>(params[0]);
 
     return params;
