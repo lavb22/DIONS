@@ -205,13 +205,6 @@ public:
         return Write(std::string("minversion"), nVersion);
     }
 
-    //#########AGREGADO
-
-     bool WriteWatchOnly(const CScript &script);
-     bool EraseWatchOnly(const CScript &script);
-
-     //####FINAGREGADO
-
     bool ReadAccount(const std::string& strAccount, CAccount& account);
     bool WriteAccount(const std::string& strAccount, const CAccount& account);
 private:
@@ -220,6 +213,11 @@ public:
     bool WriteAccountingEntry(const CAccountingEntry& acentry);
     int64_t GetAccountCreditDebit(const std::string& strAccount);
     void ListAccountCreditDebit(const std::string& strAccount, std::list<CAccountingEntry>& acentries);
+
+    //#########AGREGADO
+    bool WriteWatchOnly(const CScript &script);
+    bool EraseWatchOnly(const CScript &script);
+    //####FINAGREGADO
 
     DBErrors ReorderTransactions(CWallet*);
     DBErrors LoadWallet(CWallet* pwallet);

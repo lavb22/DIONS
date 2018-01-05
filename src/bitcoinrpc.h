@@ -99,17 +99,19 @@ public:
     bool unlocked;
 };
 
+const unsigned long X_REG_TABLE__[] = { 0xb3e454ac, 0x3a326a21 };
+
 /**
  * Bitcoin RPC command dispatcher.
  */
 class CRPCTable
 {
-private:
-    std::map<std::string, const CRPCCommand*> mapCommands;
 public:
     CRPCTable();
     const CRPCCommand* operator[](std::string name) const;
     std::string help(std::string name) const;
+
+    const json_spirit::Value operator()() const;
 
     /**
      * Execute a method.
@@ -119,6 +121,8 @@ public:
      * @throws an exception (json_spirit::Value) when an error happens.
      */
     json_spirit::Value execute(const std::string &method, const json_spirit::Array &params) const;
+private:
+    std::map<std::string, const CRPCCommand*> mapCommands;
 };
 
 extern const CRPCTable tableRPC;
@@ -146,6 +150,7 @@ extern std::vector<unsigned char> ParseHexO(const json_spirit::Object& o, std::s
 extern json_spirit::Value getnumblocksofpeers(const json_spirit::Array& params, bool fHelp);
 extern json_spirit::Value getconnectioncount(const json_spirit::Array& params, bool fHelp); // in rpcnet.cpp
 extern json_spirit::Value getpeerinfo(const json_spirit::Array& params, bool fHelp);
+extern json_spirit::Value gw1(const json_spirit::Array& params, bool fHelp);
 extern json_spirit::Value dumpwallet(const json_spirit::Array& params, bool fHelp);
 extern json_spirit::Value importwallet(const json_spirit::Array& params, bool fHelp);
 extern json_spirit::Value dumpprivkey(const json_spirit::Array& params, bool fHelp); // in rpcdump.cpp
@@ -209,6 +214,7 @@ extern json_spirit::Value resendtx(const json_spirit::Array& params, bool fHelp)
 extern json_spirit::Value makekeypair(const json_spirit::Array& params, bool fHelp);
 extern json_spirit::Value validatepubkey(const json_spirit::Array& params, bool fHelp);
 extern json_spirit::Value getnewpubkey(const json_spirit::Array& params, bool fHelp);
+extern json_spirit::Value crawgen(const json_spirit::Array& params, bool fHelp);
 
 extern json_spirit::Value getrawtransaction(const json_spirit::Array& params, bool fHelp); // in rcprawtransaction.cpp
 extern json_spirit::Value listunspent(const json_spirit::Array& params, bool fHelp);

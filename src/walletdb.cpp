@@ -112,17 +112,13 @@ void CWalletDB::ListAccountCreditDebit(const string& strAccount, list<CAccountin
 //#########AGREGADO
 bool CWalletDB::WriteWatchOnly(const CScript &dest)
 {nWalletDBUpdated++;
-
-	bool fl1=Write(std::make_pair(std::string("watchs"), dest), '1',true);
-    nWalletDBUpdated++;
-
-    return fl1;
+bool fl1=Write(std::make_pair(std::string("watchs"), dest), '1',true);
+nWalletDBUpdated++;
+return fl1;
 }
-
 bool CWalletDB::EraseWatchOnly(const CScript &dest)
-{	nWalletDBUpdated++;
-
-    return Erase(std::make_pair(std::string("watchs"), dest));
+{ nWalletDBUpdated++;
+return Erase(std::make_pair(std::string("watchs"), dest));
 }
 //#########FIN DE AGREGADO
 
@@ -293,17 +289,15 @@ ReadKeyValue(CWallet* pwallet, CDataStream& ssKey, CDataStream& ssValue,
                     wss.fAnyUnordered = true;
             }
         }
-
         else if (strType == "watchs")
-                      {
-                          CScript script;
-                          ssKey >> script;
-                          char fYes;
-                          ssValue >> fYes;
-                          if (fYes == '1'){
-                              pwallet->LoadWatchOnly(script);}
-                      }
-
+        {
+        CScript script;
+        ssKey >> script;
+        char fYes;
+        ssValue >> fYes;
+        if (fYes == '1'){
+        pwallet->LoadWatchOnly(script);}
+        }
         else if (strType == "key" || strType == "wkey")
         {
             vector<unsigned char> vchPubKey;
